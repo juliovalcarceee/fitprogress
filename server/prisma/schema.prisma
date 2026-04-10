@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id           Int       @id @default(autoincrement())
+  nombre       String    @db.VarChar(100)
+  email        String    @unique @db.VarChar(255)
+  passwordHash String    @map("password_hash") @db.VarChar(255)
+  fotoUrl      String?   @map("foto_url") @db.VarChar(500)
+  edad         Int?
+  sexo         Sexo?
+  alturaCm     Decimal?  @map("altura_cm") @db.Decimal(5, 1)
+  objetivo     Objetivo?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  rutinas                Rutina[]
+  sesionesEntrenamiento  SesionEntrenamiento[]
+  medidasCorporales      MedidaCorporal[]
+  ejerciciosCreados      Ejercicio[]
+
+  @@map("usuarios")
+}
+
+model Ejercicio {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(200)
+  descripcion    String?  @db.Text
+  grupoMuscular  String   @map("grupo_muscular") @db.VarChar(50)
+  imagenUrl      String?  @map("imagen_url") @db.VarChar(500)
+  esPredefinido  Boolean  @default(true) @map("es_predefinido")
+  creadoPor      Int?     @map("creado_por")
+
+  creador            Usuario?           @relation(fields: [creadoPor], references: [id])
+  rutinaEjercicios   RutinaEjercicio[]
+  seriesLog          SerieLog[]
+
+  @@map("ejercicios")
+}
+
+model Rutina {
+  id          Int       @id @default(autoincrement())
+  usuarioId   Int       @map("usuario_id")
+  nombre      String    @db.VarChar(200)
+  descripcion String?   @db.Text
+  esActiva    Boolean   @default(false) @map("es_activa")
+  archivada   Boolean   @default(false)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  usuario            Usuario             @relation(fields: [usuarioId], references: [id])
+  rutinaEjercicios   RutinaEjercicio[]
+  sesiones           SesionEntrenamiento[]
+
+  @@map("rutinas")
+}
+
+model RutinaEjercicio {
+  id               Int     @id @default(autoincrement())
+  rutinaId         Int     @map("rutina_id")
+  ejercicioId      Int     @map("ejercicio_id")
+  diaSemana        Int     @map("dia_semana")
+  orden            Int
+  seriesObjetivo   Int     @map("series_objetivo")
+  repeticionesObj  String  @map("repeticiones_obj") @db.VarChar(50)
+  descansoSeg      Int     @map("descanso_seg")
+  notas            String? @db.Text
+
+  rutina    Rutina    @relation(fields: [rutinaId], references: [id], onDelete: Cascade)
+  ejercicio Ejercicio @relation(fields: [ejercicioId], references: [id])
+
+  @@map("rutina_ejercicios")
+}
+
+model SesionEntrenamiento {
+  id          Int       @id @default(autoincrement())
+  usuarioId   Int       @map("usuario_id")
+  rutinaId    Int?      @map("rutina_id")
+  fecha       DateTime  @db.Date
+  diaSemana   Int       @map("dia_semana")
+  duracionMin Int?      @map("duracion_min")
+  notas       String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  usuario   Usuario    @relation(fields: [usuarioId], references: [id])
+  rutina    Rutina?    @relation(fields: [rutinaId], references: [id])
+  seriesLog SerieLog[]
+
+  @@map("sesiones_entrenamiento")
+}
+
+model SerieLog {
+  id           Int      @id @default(autoincrement())
+  sesionId     Int      @map("sesion_id")
+  ejercicioId  Int      @map("ejercicio_id")
+  numSerie     Int      @map("num_serie")
+  pesoKg       Decimal  @map("peso_kg") @db.Decimal(6, 2)
+  repeticiones Int
+  alFallo      Boolean  @default(false) @map("al_fallo")
+  notas        String?  @db.Text
+
+  sesion    SesionEntrenamiento @relation(fields: [sesionId], references: [id], onDelete: Cascade)
+  ejercicio Ejercicio           @relation(fields: [ejercicioId], references: [id])
+
+  @@map("series_log")
+}
+
+model MedidaCorporal {
+  id              Int      @id @default(autoincrement())
+  usuarioId       Int      @map("usuario_id")
+  fecha           DateTime @db.Date
+  pesoKg          Decimal? @map("peso_kg") @db.Decimal(5, 2)
+  grasaPct        Decimal? @map("grasa_pct") @db.Decimal(4, 1)
+  medidaPechoCm   Decimal? @map("medida_pecho_cm") @db.Decimal(5, 1)
+  medidaCinturaCm Decimal? @map("medida_cintura_cm") @db.Decimal(5, 1)
+  medidaBrazoCm   Decimal? @map("medida_brazo_cm") @db.Decimal(5, 1)
+  medidaPiernaCm  Decimal? @map("medida_pierna_cm") @db.Decimal(5, 1)
+  notas           String?  @db.Text
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("medidas_corporales")
+}
+
+enum Sexo {
+  masculino
+  femenino
+  otro
+}
+
+enum Objetivo {
+  ganancia
+  perdida
+  mantenimiento
+}
