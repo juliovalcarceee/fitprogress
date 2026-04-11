@@ -1,8 +1,25 @@
-import { registerRootComponent } from 'expo';
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './routes/authRoutes';
 
-import App from './App';
+dotenv.config();
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+
+// Rutas
+app.use('/api/auth', authRoutes);
+
+app.get('/', (req, res) => {
+  res.json({ mensaje: 'API FitProgress funcionando' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`);
+});
+
+export default app;
