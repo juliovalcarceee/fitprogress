@@ -6,7 +6,8 @@
   "scripts": {
   "dev": "nodemon src/index.ts",
   "build": "tsc",
-  "start": "node build/index.js"
+  "start": "node build/index.js",
+  "seed": "ts-node prisma/seed.ts"
 },
   "keywords": [],
   "author": "",
