@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import ejercicioRoutes from './routes/ejercicioRoutes';
 import rutinaRoutes from './routes/rutinaRoutes';
+import sesionRoutes from './routes/sesionRoutes';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/ejercicios', ejercicioRoutes);
 app.use('/api/rutinas', rutinaRoutes);
+app.use('/api/sesiones', sesionRoutes);
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API FitProgress funcionando' });
