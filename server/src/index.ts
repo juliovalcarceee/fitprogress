@@ -6,6 +6,7 @@ import ejercicioRoutes from './routes/ejercicioRoutes';
 import rutinaRoutes from './routes/rutinaRoutes';
 import sesionRoutes from './routes/sesionRoutes';
 import medidaRoutes from './routes/medidaRoutes';
+import { manejarErrorGeneral } from './middleware/manejarErrores';
 
 dotenv.config();
 
@@ -25,6 +26,9 @@ app.use('/api/medidas', medidaRoutes);
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API FitProgress funcionando' });
 });
+
+// Manejo de errores
+app.use(manejarErrorGeneral);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);

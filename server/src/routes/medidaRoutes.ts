@@ -13,13 +13,15 @@ import {
   obtenerResumen
 } from '../controllers/estadisticaController';
 import { authMiddleware } from '../middleware/auth';
+import { validarMedida } from '../middleware/validaciones';
+import { comprobarValidacion } from '../middleware/manejarErrores';
 
 const router = Router();
 
 // Medidas corporales
-router.post('/', authMiddleware, registrarMedida);
+router.post('/', authMiddleware, validarMedida, comprobarValidacion, registrarMedida);
 router.get('/', authMiddleware, obtenerMedidas);
-router.put('/:id', authMiddleware, actualizarMedida);
+router.put('/:id', authMiddleware, validarMedida, comprobarValidacion, actualizarMedida);
 router.delete('/:id', authMiddleware, eliminarMedida);
 
 // Estadísticas y gráficos
