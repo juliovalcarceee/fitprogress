@@ -18,6 +18,7 @@ import PerfilScreen from '../screens/PerfilScreen';
 
 // Pantallas secundarias
 import EntrenamientoScreen from '../screens/EntrenamientoScreen';
+import CrearRutinaScreen from '../screens/CrearRutinaScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -95,6 +96,16 @@ const AppNavigator = () => {
                 headerStyle: { backgroundColor: '#1A1A2E' },
                 headerTintColor: '#fff',
                 title: 'Entrenamiento'
+              }}
+            />
+            <Stack.Screen
+              name="CrearRutina"
+              component={CrearRutinaScreen}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#1A1A2E' },
+                headerTintColor: '#fff',
+                title: 'Nueva rutina'
               }}
             />
           </>
