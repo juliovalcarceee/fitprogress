@@ -16,6 +16,9 @@ import RutinasScreen from '../screens/RutinasScreen';
 import ProgresoScreen from '../screens/ProgresoScreen';
 import PerfilScreen from '../screens/PerfilScreen';
 
+// Pantallas secundarias
+import EntrenamientoScreen from '../screens/EntrenamientoScreen';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -82,7 +85,19 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {token ? (
-          <Stack.Screen name="Main" component={TabNavigator} />
+          <>
+            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen
+              name="Entrenamiento"
+              component={EntrenamientoScreen}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#1A1A2E' },
+                headerTintColor: '#fff',
+                title: 'Entrenamiento'
+              }}
+            />
+          </>
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
