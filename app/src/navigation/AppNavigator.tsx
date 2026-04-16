@@ -15,10 +15,12 @@ import EjerciciosScreen from '../screens/EjerciciosScreen';
 import RutinasScreen from '../screens/RutinasScreen';
 import ProgresoScreen from '../screens/ProgresoScreen';
 import PerfilScreen from '../screens/PerfilScreen';
+import HistorialScreen from '../screens/HistorialScreen';
 
 // Pantallas secundarias
 import EntrenamientoScreen from '../screens/EntrenamientoScreen';
 import CrearRutinaScreen from '../screens/CrearRutinaScreen';
+import DetalleSesionScreen from '../screens/DetalleSesionScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,14 +50,19 @@ const TabNavigator = () => {
         options={{ tabBarLabel: 'Inicio', title: 'FitProgress' }}
       />
       <Tab.Screen
+        name="Rutinas"
+        component={RutinasScreen}
+        options={{ tabBarLabel: 'Rutinas', title: 'Mis rutinas' }}
+      />
+      <Tab.Screen
         name="Ejercicios"
         component={EjerciciosScreen}
         options={{ tabBarLabel: 'Ejercicios', title: 'Catálogo' }}
       />
       <Tab.Screen
-        name="Rutinas"
-        component={RutinasScreen}
-        options={{ tabBarLabel: 'Rutinas', title: 'Mis rutinas' }}
+        name="Historial"
+        component={HistorialScreen}
+        options={{ tabBarLabel: 'Historial', title: 'Historial' }}
       />
       <Tab.Screen
         name="Progreso"
@@ -105,7 +112,17 @@ const AppNavigator = () => {
                 headerShown: true,
                 headerStyle: { backgroundColor: '#1A1A2E' },
                 headerTintColor: '#fff',
-                title: 'Nueva rutina'
+                title: 'Rutina'
+              }}
+            />
+            <Stack.Screen
+              name="DetalleSesion"
+              component={DetalleSesionScreen}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#1A1A2E' },
+                headerTintColor: '#fff',
+                title: 'Detalle de sesión'
               }}
             />
           </>

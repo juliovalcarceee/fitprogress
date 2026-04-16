@@ -81,6 +81,9 @@ export const obtenerHistorial = () =>
 export const obtenerSesionPorId = (id: number) =>
   api.get(`/sesiones/${id}`);
 
+export const eliminarSesion = (id: number) =>
+  api.delete(`/sesiones/${id}`);
+
 export const registrarSerie = (datos: any) =>
   api.post('/sesiones/serie', datos);
 
