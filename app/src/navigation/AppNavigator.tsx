@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 
@@ -28,51 +29,77 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap = 'home';
+
+          if (route.name === 'Inicio') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Rutinas') {
+            iconName = focused ? 'barbell' : 'barbell-outline';
+          } else if (route.name === 'Ejercicios') {
+            iconName = focused ? 'fitness' : 'fitness-outline';
+          } else if (route.name === 'Historial') {
+            iconName = focused ? 'time' : 'time-outline';
+          } else if (route.name === 'Progreso') {
+            iconName = focused ? 'trending-up' : 'trending-up-outline';
+          } else if (route.name === 'Perfil') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
         tabBarActiveTintColor: '#E94560',
         tabBarInactiveTintColor: '#888',
         tabBarStyle: {
           backgroundColor: '#1A1A2E',
           borderTopColor: '#16213E',
-          height: 60,
-          paddingBottom: 8,
+          height: 65,
+          paddingBottom: 10,
           paddingTop: 8
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600'
         },
         headerStyle: {
           backgroundColor: '#1A1A2E'
         },
-        headerTintColor: '#fff'
-      }}
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold'
+        }
+      })}
     >
       <Tab.Screen
         name="Inicio"
         component={InicioScreen}
-        options={{ tabBarLabel: 'Inicio', title: 'FitProgress' }}
+        options={{ title: 'FitProgress' }}
       />
       <Tab.Screen
         name="Rutinas"
         component={RutinasScreen}
-        options={{ tabBarLabel: 'Rutinas', title: 'Mis rutinas' }}
+        options={{ title: 'Mis rutinas' }}
       />
       <Tab.Screen
         name="Ejercicios"
         component={EjerciciosScreen}
-        options={{ tabBarLabel: 'Ejercicios', title: 'Catálogo' }}
+        options={{ title: 'Catálogo' }}
       />
       <Tab.Screen
         name="Historial"
         component={HistorialScreen}
-        options={{ tabBarLabel: 'Historial', title: 'Historial' }}
+        options={{ title: 'Historial' }}
       />
       <Tab.Screen
         name="Progreso"
         component={ProgresoScreen}
-        options={{ tabBarLabel: 'Progreso', title: 'Mi progreso' }}
+        options={{ title: 'Mi progreso' }}
       />
       <Tab.Screen
         name="Perfil"
         component={PerfilScreen}
-        options={{ tabBarLabel: 'Perfil', title: 'Mi perfil' }}
+        options={{ title: 'Mi perfil' }}
       />
     </Tab.Navigator>
   );
