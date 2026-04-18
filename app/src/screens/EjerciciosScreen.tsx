@@ -4,7 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { obtenerEjercicios, obtenerGruposMusculares } from '../services/api';
 import { Ejercicio } from '../types/types';
 
-const EjerciciosScreen = () => {
+const EjerciciosScreen = ({ navigation }: any) => {
   const [ejercicios, setEjercicios] = useState<Ejercicio[]>([]);
   const [grupos, setGrupos] = useState<string[]>([]);
   const [grupoSeleccionado, setGrupoSeleccionado] = useState<string | null>(null);
@@ -62,6 +62,9 @@ const EjerciciosScreen = () => {
           {item.descripcion}
         </Text>
       )}
+      {!item.esPredefinido && (
+        <Text style={styles.personalizado}>Ejercicio personalizado</Text>
+      )}
     </View>
   );
 
@@ -113,6 +116,13 @@ const EjerciciosScreen = () => {
           </View>
         }
       />
+
+      <TouchableOpacity
+        style={styles.botonFlotante}
+        onPress={() => navigation.navigate('CrearEjercicio')}
+      >
+        <Text style={styles.botonFlotanteTexto}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -172,7 +182,8 @@ const styles = StyleSheet.create({
   },
   lista: {
     padding: 16,
-    paddingTop: 4
+    paddingTop: 4,
+    paddingBottom: 100
   },
   tarjeta: {
     backgroundColor: '#1A1A2E',
@@ -209,6 +220,12 @@ const styles = StyleSheet.create({
     color: '#999',
     lineHeight: 18
   },
+  personalizado: {
+    fontSize: 11,
+    color: '#E94560',
+    marginTop: 6,
+    fontStyle: 'italic'
+  },
   vacio: {
     alignItems: 'center',
     padding: 40
@@ -216,7 +233,24 @@ const styles = StyleSheet.create({
   vacioTexto: {
     color: '#888',
     fontSize: 16
-  }
+  },
+  botonFlotante: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#E94560',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#E94560',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8
+  },
+  botonFlotanteTexto: { color: '#fff', fontSize: 32, fontWeight: 'bold' }
 });
 
 export default EjerciciosScreen;

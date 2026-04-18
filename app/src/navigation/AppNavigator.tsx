@@ -22,6 +22,7 @@ import HistorialScreen from '../screens/HistorialScreen';
 import EntrenamientoScreen from '../screens/EntrenamientoScreen';
 import CrearRutinaScreen from '../screens/CrearRutinaScreen';
 import DetalleSesionScreen from '../screens/DetalleSesionScreen';
+import CrearEjercicioScreen from '../screens/CrearEjercicioScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -150,6 +151,16 @@ const AppNavigator = () => {
                 headerStyle: { backgroundColor: '#1A1A2E' },
                 headerTintColor: '#fff',
                 title: 'Detalle de sesión'
+              }}
+            />
+            <Stack.Screen
+              name="CrearEjercicio"
+              component={CrearEjercicioScreen}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#1A1A2E' },
+                headerTintColor: '#fff',
+                title: 'Nuevo ejercicio'
               }}
             />
           </>
