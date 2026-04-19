@@ -10,15 +10,13 @@ import {
   archivarRutina
 } from '../controllers/rutinaController';
 import { authMiddleware } from '../middleware/auth';
-import { validarRutina } from '../middleware/validaciones';
-import { comprobarValidacion } from '../middleware/manejarErrores';
 
 const router = Router();
 
 router.get('/', authMiddleware, obtenerRutinas);
 router.get('/:id', authMiddleware, obtenerRutinaPorId);
-router.post('/', authMiddleware, validarRutina, comprobarValidacion, crearRutina);
-router.put('/:id', authMiddleware, validarRutina, comprobarValidacion, actualizarRutina);
+router.post('/', authMiddleware, crearRutina);
+router.put('/:id', authMiddleware, actualizarRutina);
 router.delete('/:id', authMiddleware, eliminarRutina);
 router.post('/:id/duplicar', authMiddleware, duplicarRutina);
 router.put('/:id/activar', authMiddleware, marcarRutinaActiva);

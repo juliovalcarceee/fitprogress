@@ -71,10 +71,8 @@ async function main() {
   console.log('Insertando ejercicios predefinidos...');
 
   for (const ejercicio of ejerciciosPredefinidos) {
-    await prisma.ejercicio.upsert({
-      where: { id: 0 },
-      update: {},
-      create: {
+    await prisma.ejercicio.create({
+      data: {
         nombre: ejercicio.nombre,
         descripcion: ejercicio.descripcion,
         grupoMuscular: ejercicio.grupoMuscular,
