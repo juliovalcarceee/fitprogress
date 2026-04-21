@@ -1,24 +1,52 @@
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://192.168.1.1:3000/api';
+const API_URL = 'http://192.168.1.78:3000/api';
 
-const api = axios.create({
-  baseURL: API_URL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
-// Añadir token a cada petición automáticamente
-api.interceptors.request.use(async (config) => {
+const getHeaders = async () => {
   const token = await AsyncStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const headers: any = { 'Content-Type': 'application/json' };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+};
+
+const api = {
+  get: async (url: string, config?: any) => {
+    const headers = await getHeaders();
+    let fullUrl = API_URL + url;
+    if (config?.params) {
+      const params = Object.entries(config.params)
+        .filter(([_, v]) => v !== undefined && v !== null && v !== '')
+        .map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`)
+        .join('&');
+      if (params) fullUrl += '?' + params;
+    }
+    const res = await fetch(fullUrl, { headers });
+    const data = await res.json();
+    if (!res.ok) throw { response: { data } };
+    return { data };
+  },
+  post: async (url: string, body?: any) => {
+    const headers = await getHeaders();
+    const res = await fetch(API_URL + url, { method: 'POST', headers, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) throw { response: { data } };
+    return { data };
+  },
+  put: async (url: string, body?: any) => {
+    const headers = await getHeaders();
+    const res = await fetch(API_URL + url, { method: 'PUT', headers, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) throw { response: { data } };
+    return { data };
+  },
+  delete: async (url: string) => {
+    const headers = await getHeaders();
+    const res = await fetch(API_URL + url, { method: 'DELETE', headers });
+    const data = await res.json();
+    if (!res.ok) throw { response: { data } };
+    return { data };
   }
-  return config;
-});
+};
 
 // Auth
 export const registrarse = (nombre: string, email: string, password: string) =>
