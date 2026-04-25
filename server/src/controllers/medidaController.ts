@@ -1,3 +1,7 @@
+/**
+ * Controlador de medidas corporales
+ * Registro y consulta de medidas físicas del usuario
+ */
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 

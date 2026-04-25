@@ -1,3 +1,9 @@
+/**
+ * FitProgress - Servidor Backend
+ * API REST para la gestión de rutinas de entrenamiento
+ * Autor: Julio Valcárcel Vigier
+ */
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -16,7 +22,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Rutas
+// Rutas de la API
 app.use('/api/auth', authRoutes);
 app.use('/api/ejercicios', ejercicioRoutes);
 app.use('/api/rutinas', rutinaRoutes);
@@ -24,14 +30,13 @@ app.use('/api/sesiones', sesionRoutes);
 app.use('/api/medidas', medidaRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ mensaje: 'API FitProgress funcionando' });
+  res.json({ mensaje: 'API FitProgress funcionando', version: '1.0.0' });
 });
 
-// Manejo de errores
 app.use(manejarErrorGeneral);
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+  console.log(`Servidor FitProgress corriendo en puerto ${PORT}`);
 });
 
 export default app;

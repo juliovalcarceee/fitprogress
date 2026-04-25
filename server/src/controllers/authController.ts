@@ -1,3 +1,7 @@
+/**
+ * Controlador de autenticación
+ * Gestiona el registro, login y perfil del usuario
+ */
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';

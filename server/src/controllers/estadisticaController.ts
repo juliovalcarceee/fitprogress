@@ -1,3 +1,7 @@
+/**
+ * Controlador de estadísticas
+ * Genera datos de evolución para los gráficos de progreso
+ */
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 

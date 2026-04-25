@@ -1,3 +1,7 @@
+/**
+ * Controlador de ejercicios
+ * CRUD del catálogo de ejercicios predefinidos y personalizados
+ */
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 

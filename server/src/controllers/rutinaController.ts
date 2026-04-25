@@ -1,3 +1,7 @@
+/**
+ * Controlador de rutinas
+ * CRUD de rutinas con duplicar, archivar y marcar como activa
+ */
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 

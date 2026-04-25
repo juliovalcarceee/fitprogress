@@ -1,3 +1,7 @@
+/**
+ * Controlador de sesiones de entrenamiento
+ * Gestiona el inicio, registro de series y finalización de sesiones
+ */
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 
