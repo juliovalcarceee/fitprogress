@@ -1,10 +1,10 @@
 /**
  * Pantalla de catálogo de ejercicios
- * Muestra ejercicios organizados por grupo muscular con búsqueda y filtros
+ * Muestra ejercicios organizados por grupo muscular con búsqueda, filtros y vídeos
  */
 
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, RefreshControl, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, RefreshControl, ScrollView, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { obtenerEjercicios, obtenerGruposMusculares } from '../services/api';
@@ -67,6 +67,10 @@ const EjerciciosScreen = ({ navigation }: any) => {
     setExpandido(expandido === id ? null : id);
   };
 
+  const abrirVideo = (url: string) => {
+    Linking.openURL(url);
+  };
+
   const renderEjercicio = ({ item }: { item: Ejercicio }) => {
     const estaExpandido = expandido === item.id;
     const color = coloresGrupo[item.grupoMuscular] || '#666';
@@ -93,15 +97,31 @@ const EjerciciosScreen = ({ navigation }: any) => {
                   <Text style={styles.badgePersonalizadoTexto}>Personalizado</Text>
                 </View>
               )}
+              {item.imagenUrl && (
+                <View style={styles.badgeVideo}>
+                  <Ionicons name="play-circle" size={12} color="#E94560" />
+                  <Text style={styles.badgeVideoTexto}>Vídeo</Text>
+                </View>
+              )}
             </View>
           </View>
           <Ionicons name={estaExpandido ? 'chevron-up' : 'chevron-down'} size={20} color="#888" />
         </View>
 
-        {estaExpandido && item.descripcion && (
+        {estaExpandido && (
           <View style={styles.descripcionContainer}>
-            <Text style={styles.descripcionTitulo}>Cómo realizar el ejercicio:</Text>
-            <Text style={styles.ejercicioDescripcion}>{item.descripcion}</Text>
+            {item.descripcion && (
+              <>
+                <Text style={styles.descripcionTitulo}>Cómo realizar el ejercicio:</Text>
+                <Text style={styles.ejercicioDescripcion}>{item.descripcion}</Text>
+              </>
+            )}
+            {item.imagenUrl && (
+              <TouchableOpacity style={styles.botonVideo} onPress={() => abrirVideo(item.imagenUrl!)}>
+                <Ionicons name="play-circle" size={22} color="#fff" />
+                <Text style={styles.botonVideoTexto}>Ver vídeo demostrativo</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </TouchableOpacity>
@@ -211,9 +231,20 @@ const styles = StyleSheet.create({
   badgeTexto: { color: '#fff', fontSize: 10, fontWeight: 'bold', textTransform: 'capitalize' },
   badgePersonalizado: { backgroundColor: '#16213E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, borderWidth: 1, borderColor: '#E94560' },
   badgePersonalizadoTexto: { color: '#E94560', fontSize: 10, fontWeight: 'bold' },
+  badgeVideo: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    backgroundColor: '#16213E', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2,
+    borderWidth: 1, borderColor: '#E9456040'
+  },
+  badgeVideoTexto: { color: '#E94560', fontSize: 10, fontWeight: 'bold' },
   descripcionContainer: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#2a2a4a' },
   descripcionTitulo: { color: '#E94560', fontSize: 12, fontWeight: '600', marginBottom: 6 },
   ejercicioDescripcion: { fontSize: 14, color: '#ccc', lineHeight: 20 },
+  botonVideo: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    backgroundColor: '#E94560', borderRadius: 10, padding: 12, marginTop: 12
+  },
+  botonVideoTexto: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
   vacio: { alignItems: 'center', padding: 40 },
   vacioTexto: { color: '#888', fontSize: 16, marginTop: 12 },
   botonFlotante: {
