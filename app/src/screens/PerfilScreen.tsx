@@ -1,6 +1,6 @@
 /**
  * Pantalla de perfil del usuario
- * Permite editar datos personales y seleccionar foto de perfil
+ * Permite editar datos personales, seleccionar foto y cambiar tema
  */
 
 import React, { useState } from 'react';
@@ -8,9 +8,11 @@ import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert,
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../context/AuthContext';
+import { useTema } from '../context/TemaContext';
 
 const PerfilScreen = () => {
   const { usuario, actualizarUsuario, logout } = useAuth();
+  const { oscuro, cambiarTema } = useTema();
   const [editando, setEditando] = useState(false);
   const [nombre, setNombre] = useState(usuario?.nombre || '');
   const [edad, setEdad] = useState(usuario?.edad?.toString() || '');
@@ -222,7 +224,16 @@ const PerfilScreen = () => {
       </View>
 
       <View style={styles.seccion}>
-        <Text style={styles.seccionTitulo}>Información de la cuenta</Text>
+        <Text style={styles.seccionTitulo}>Ajustes</Text>
+        <TouchableOpacity style={styles.ajusteItem} onPress={cambiarTema}>
+          <View style={styles.ajusteIcono}>
+            <Ionicons name={oscuro ? 'moon' : 'sunny'} size={18} color="#E94560" />
+            <Text style={styles.ajusteTexto}>Modo {oscuro ? 'oscuro' : 'claro'}</Text>
+          </View>
+          <View style={[styles.toggle, oscuro && styles.toggleActivo]}>
+            <View style={[styles.toggleCirculo, oscuro && styles.toggleCirculoActivo]} />
+          </View>
+        </TouchableOpacity>
         <View style={styles.infoCuenta}>
           <Ionicons name="time-outline" size={18} color="#888" />
           <Text style={styles.infoCuentaTexto}>
@@ -295,7 +306,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     backgroundColor: '#3a1520', margin: 16, marginTop: 0, borderRadius: 12, padding: 16
   },
-  botonLogoutTexto: { color: '#E94560', fontWeight: 'bold', fontSize: 16 }
+  botonLogoutTexto: { color: '#E94560', fontWeight: 'bold', fontSize: 16 },
+  ajusteItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, marginBottom: 8 },
+  ajusteIcono: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  ajusteTexto: { color: '#fff', fontSize: 15 },
+  toggle: { width: 50, height: 28, borderRadius: 14, backgroundColor: '#16213E', justifyContent: 'center', padding: 3 },
+  toggleActivo: { backgroundColor: '#E94560' },
+  toggleCirculo: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#888' },
+  toggleCirculoActivo: { backgroundColor: '#fff', alignSelf: 'flex-end' }
 });
 
 export default PerfilScreen;
