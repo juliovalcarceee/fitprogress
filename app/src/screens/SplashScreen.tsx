@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, Image } from 'react-native';
 
 const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
   const opacidad = new Animated.Value(0);
@@ -31,9 +31,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.contenido, { opacity: opacidad, transform: [{ scale: escala }] }]}>
-        <Text style={styles.emoji}>💪</Text>
-        <Text style={styles.titulo}>FitProgress</Text>
-        <Text style={styles.subtitulo}>Tu entrenamiento. Tu progreso.</Text>
+        <Image source={require('../../assets/logo.png')} style={styles.logo} resizeMode="contain" />
       </Animated.View>
       <Text style={styles.version}>v1.0.0</Text>
     </View>
@@ -50,19 +48,9 @@ const styles = StyleSheet.create({
   contenido: {
     alignItems: 'center'
   },
-  emoji: {
-    fontSize: 80,
-    marginBottom: 20
-  },
-  titulo: {
-    fontSize: 42,
-    fontWeight: 'bold',
-    color: '#E94560',
-    marginBottom: 10
-  },
-  subtitulo: {
-    fontSize: 18,
-    color: '#ccc'
+  logo: {
+    width: 280,
+    height: 280
   },
   version: {
     position: 'absolute',

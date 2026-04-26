@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
 const LoginScreen = ({ navigation }: any) => {
@@ -28,9 +28,7 @@ const LoginScreen = ({ navigation }: any) => {
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.logoContainer}>
-          <Text style={styles.logo}>💪</Text>
-          <Text style={styles.titulo}>FitProgress</Text>
-          <Text style={styles.subtitulo}>Tu entrenamiento. Tu progreso.</Text>
+          <Image source={require('../../assets/logo.png')} style={styles.logo} resizeMode="contain" />
         </View>
 
         <View style={styles.formulario}>
@@ -86,21 +84,11 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 40
+    marginBottom: 30
   },
   logo: {
-    fontSize: 64,
-    marginBottom: 12
-  },
-  titulo: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#E94560',
-    marginBottom: 8
-  },
-  subtitulo: {
-    fontSize: 16,
-    color: '#ccc'
+    width: 220,
+    height: 220
   },
   formulario: {
     backgroundColor: '#1A1A2E',
