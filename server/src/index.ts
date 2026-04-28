@@ -12,6 +12,7 @@ import ejercicioRoutes from './routes/ejercicioRoutes';
 import rutinaRoutes from './routes/rutinaRoutes';
 import sesionRoutes from './routes/sesionRoutes';
 import medidaRoutes from './routes/medidaRoutes';
+import favoritoRoutes from './routes/favoritoRoutes';
 import { manejarErrorGeneral } from './middleware/manejarErrores';
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.use('/api/ejercicios', ejercicioRoutes);
 app.use('/api/rutinas', rutinaRoutes);
 app.use('/api/sesiones', sesionRoutes);
 app.use('/api/medidas', medidaRoutes);
+app.use('/api/favoritos', favoritoRoutes);
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API FitProgress funcionando', version: '1.0.0' });

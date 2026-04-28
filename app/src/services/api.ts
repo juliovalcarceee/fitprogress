@@ -150,4 +150,14 @@ export const obtenerVolumenPorSesion = () =>
 export const obtenerResumen = () =>
   api.get('/medidas/estadisticas/resumen');
 
+// Favoritos
+export const obtenerFavoritos = () =>
+  api.get('/favoritos');
+
+export const toggleFavorito = (ejercicioId: number) =>
+  api.post(`/favoritos/${ejercicioId}`);
+
+export const verificarFavorito = (ejercicioId: number) =>
+  api.get(`/favoritos/${ejercicioId}`);
+
 export default api;

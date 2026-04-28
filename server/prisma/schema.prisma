@@ -24,6 +24,7 @@ model Usuario {
   sesionesEntrenamiento  SesionEntrenamiento[]
   medidasCorporales      MedidaCorporal[]
   ejerciciosCreados      Ejercicio[]
+  ejerciciosFavoritos    EjercicioFavorito[]
 
   @@map("usuarios")
 }
@@ -40,6 +41,7 @@ model Ejercicio {
   creador            Usuario?           @relation(fields: [creadoPor], references: [id])
   rutinaEjercicios   RutinaEjercicio[]
   seriesLog          SerieLog[]
+  favoritos          EjercicioFavorito[]
 
   @@map("ejercicios")
 }
@@ -126,6 +128,19 @@ model MedidaCorporal {
   usuario Usuario @relation(fields: [usuarioId], references: [id])
 
   @@map("medidas_corporales")
+}
+
+model EjercicioFavorito {
+  id          Int      @id @default(autoincrement())
+  usuarioId   Int      @map("usuario_id")
+  ejercicioId Int      @map("ejercicio_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  ejercicio Ejercicio @relation(fields: [ejercicioId], references: [id])
+
+  @@unique([usuarioId, ejercicioId])
+  @@map("ejercicios_favoritos")
 }
 
 enum Sexo {

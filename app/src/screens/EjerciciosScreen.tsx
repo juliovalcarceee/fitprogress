@@ -1,13 +1,13 @@
 /**
  * Pantalla de catálogo de ejercicios
- * Muestra ejercicios organizados por grupo muscular con búsqueda, filtros y vídeos
+ * Muestra ejercicios con búsqueda, filtros, vídeos y favoritos
  */
 
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, RefreshControl, ScrollView, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import { obtenerEjercicios, obtenerGruposMusculares } from '../services/api';
+import { obtenerEjercicios, obtenerGruposMusculares, toggleFavorito, obtenerFavoritos } from '../services/api';
 import { Ejercicio } from '../types/types';
 
 const iconosGrupo: { [key: string]: string } = {
@@ -37,14 +37,26 @@ const EjerciciosScreen = ({ navigation }: any) => {
   const [busqueda, setBusqueda] = useState('');
   const [refrescando, setRefrescando] = useState(false);
   const [expandido, setExpandido] = useState<number | null>(null);
+  const [favoritos, setFavoritos] = useState<number[]>([]);
 
   const cargarDatos = async () => {
     try {
-      const [resEjercicios, resGrupos] = await Promise.all([
-        obtenerEjercicios(grupoSeleccionado || undefined, busqueda || undefined),
-        obtenerGruposMusculares()
+      const [resEjercicios, resGrupos, resFavoritos] = await Promise.all([
+        obtenerEjercicios(
+          grupoSeleccionado && grupoSeleccionado !== 'favoritos' ? grupoSeleccionado : undefined,
+          busqueda || undefined
+        ),
+        obtenerGruposMusculares(),
+        obtenerFavoritos()
       ]);
-      setEjercicios(resEjercicios.data);
+      const favIds = resFavoritos.data.map((e: any) => e.id);
+      setFavoritos(favIds);
+
+      if (grupoSeleccionado === 'favoritos') {
+        setEjercicios(resEjercicios.data.filter((e: any) => favIds.includes(e.id)));
+      } else {
+        setEjercicios(resEjercicios.data);
+      }
       setGrupos(resGrupos.data);
     } catch (error) {
       console.log('Error al cargar ejercicios');
@@ -71,10 +83,24 @@ const EjerciciosScreen = ({ navigation }: any) => {
     Linking.openURL(url);
   };
 
+  const handleToggleFavorito = async (ejercicioId: number) => {
+    try {
+      await toggleFavorito(ejercicioId);
+      setFavoritos(prev =>
+        prev.includes(ejercicioId)
+          ? prev.filter(id => id !== ejercicioId)
+          : [...prev, ejercicioId]
+      );
+    } catch (error) {
+      console.log('Error al actualizar favorito');
+    }
+  };
+
   const renderEjercicio = ({ item }: { item: Ejercicio }) => {
     const estaExpandido = expandido === item.id;
     const color = coloresGrupo[item.grupoMuscular] || '#666';
     const icono = iconosGrupo[item.grupoMuscular] || 'barbell';
+    const esFavorito = favoritos.includes(item.id);
 
     return (
       <TouchableOpacity
@@ -105,6 +131,7 @@ const EjerciciosScreen = ({ navigation }: any) => {
               )}
             </View>
           </View>
+          {esFavorito && <Ionicons name="heart" size={18} color="#E94560" style={{ marginRight: 4 }} />}
           <Ionicons name={estaExpandido ? 'chevron-up' : 'chevron-down'} size={20} color="#888" />
         </View>
 
@@ -116,6 +143,19 @@ const EjerciciosScreen = ({ navigation }: any) => {
                 <Text style={styles.ejercicioDescripcion}>{item.descripcion}</Text>
               </>
             )}
+            <TouchableOpacity
+              style={styles.botonFavorito}
+              onPress={() => handleToggleFavorito(item.id)}
+            >
+              <Ionicons
+                name={esFavorito ? 'heart' : 'heart-outline'}
+                size={22}
+                color={esFavorito ? '#E94560' : '#888'}
+              />
+              <Text style={[styles.botonFavoritoTexto, esFavorito && { color: '#E94560' }]}>
+                {esFavorito ? 'En favoritos' : 'Añadir a favoritos'}
+              </Text>
+            </TouchableOpacity>
             {item.imagenUrl && (
               <TouchableOpacity style={styles.botonVideo} onPress={() => abrirVideo(item.imagenUrl!)}>
                 <Ionicons name="play-circle" size={22} color="#fff" />
@@ -157,6 +197,13 @@ const EjerciciosScreen = ({ navigation }: any) => {
             <Ionicons name="apps" size={14} color={!grupoSeleccionado ? '#fff' : '#ccc'} />
             <Text style={[styles.filtroTexto, !grupoSeleccionado && styles.filtroTextoActivo]}>Todos</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.filtro, grupoSeleccionado === 'favoritos' && { backgroundColor: '#E94560', borderColor: '#E94560' }]}
+            onPress={() => setGrupoSeleccionado(grupoSeleccionado === 'favoritos' ? null : 'favoritos')}
+          >
+            <Ionicons name="heart" size={14} color={grupoSeleccionado === 'favoritos' ? '#fff' : '#E94560'} />
+            <Text style={[styles.filtroTexto, grupoSeleccionado === 'favoritos' && styles.filtroTextoActivo]}>Favoritos</Text>
+          </TouchableOpacity>
           {grupos.map(grupo => (
             <TouchableOpacity
               key={grupo}
@@ -182,8 +229,10 @@ const EjerciciosScreen = ({ navigation }: any) => {
         refreshControl={<RefreshControl refreshing={refrescando} onRefresh={onRefrescar} tintColor="#E94560" />}
         ListEmptyComponent={
           <View style={styles.vacio}>
-            <Ionicons name="search-outline" size={48} color="#555" />
-            <Text style={styles.vacioTexto}>No se encontraron ejercicios</Text>
+            <Ionicons name={grupoSeleccionado === 'favoritos' ? 'heart-outline' : 'search-outline'} size={48} color="#555" />
+            <Text style={styles.vacioTexto}>
+              {grupoSeleccionado === 'favoritos' ? 'No tienes ejercicios favoritos' : 'No se encontraron ejercicios'}
+            </Text>
           </View>
         }
       />
@@ -240,6 +289,12 @@ const styles = StyleSheet.create({
   descripcionContainer: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#2a2a4a' },
   descripcionTitulo: { color: '#E94560', fontSize: 12, fontWeight: '600', marginBottom: 6 },
   ejercicioDescripcion: { fontSize: 14, color: '#ccc', lineHeight: 20 },
+  botonFavorito: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    backgroundColor: '#16213E', borderRadius: 10, padding: 12, marginTop: 12,
+    borderWidth: 1, borderColor: '#2a2a4a'
+  },
+  botonFavoritoTexto: { color: '#888', fontSize: 14, fontWeight: '600' },
   botonVideo: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     backgroundColor: '#E94560', borderRadius: 10, padding: 12, marginTop: 12
