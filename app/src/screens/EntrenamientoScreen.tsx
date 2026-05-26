@@ -105,7 +105,6 @@ const EntrenamientoScreen = ({ route, navigation }: any) => {
         )
       }));
 
-      // Iniciar descanso
       const ejercicio = ejerciciosDelDia.find(e => e.ejercicioId === ejercicioId);
       if (ejercicio) {
         iniciarDescanso(ejercicio.descansoSeg);
@@ -154,8 +153,10 @@ const EntrenamientoScreen = ({ route, navigation }: any) => {
               if (intervaloDescanso.current) clearInterval(intervaloDescanso.current);
 
               if (sesionId) {
+                // CORRECCIÓN: duracionMin mínimo 1 para evitar guardar 0
+                const duracion = Math.max(1, Math.round(tiempoTotal / 60));
                 await finalizarSesionEntrenamiento(sesionId, {
-                  duracionMin: Math.round(tiempoTotal / 60)
+                  duracionMin: duracion
                 });
               }
 
@@ -251,11 +252,15 @@ const EntrenamientoScreen = ({ route, navigation }: any) => {
               ]}
               onPress={() => setEjercicioActual(index)}
             >
+              {/* CORRECCIÓN: concatenar string en vez de expresión mixta */}
               <Text style={[
                 styles.selectorTexto,
                 ejercicioActual === index && styles.selectorTextoActivo
               ]}>
-                {todasCompletadas ? '✓ ' : ''}{ej.ejercicio?.nombre || `Ejercicio ${index + 1}`}
+                {todasCompletadas
+                  ? `✓ ${ej.ejercicio?.nombre || `Ejercicio ${index + 1}`}`
+                  : (ej.ejercicio?.nombre || `Ejercicio ${index + 1}`)
+                }
               </Text>
             </TouchableOpacity>
           );
@@ -270,7 +275,7 @@ const EntrenamientoScreen = ({ route, navigation }: any) => {
               {ejercicioActualData.ejercicio?.nombre}
             </Text>
             <Text style={styles.ejercicioInfo}>
-              {ejercicioActualData.seriesObjetivo} series × {ejercicioActualData.repeticionesObj} reps · {ejercicioActualData.descansoSeg}s descanso
+              {`${ejercicioActualData.seriesObjetivo} series × ${ejercicioActualData.repeticionesObj} reps · ${ejercicioActualData.descansoSeg}s descanso`}
             </Text>
 
             <View style={styles.seriesCabecera}>
@@ -278,7 +283,7 @@ const EntrenamientoScreen = ({ route, navigation }: any) => {
               <Text style={[styles.seriesCabeceraTexto, { flex: 1 }]}>Peso (kg)</Text>
               <Text style={[styles.seriesCabeceraTexto, { flex: 1 }]}>Reps</Text>
               <Text style={[styles.seriesCabeceraTexto, { flex: 0.5 }]}>Fallo</Text>
-              <Text style={[styles.seriesCabeceraTexto, { flex: 0.8 }]}></Text>
+              <Text style={[styles.seriesCabeceraTexto, { flex: 0.8 }]}>{''}</Text>
             </View>
 
             {series[ejercicioActualData.ejercicioId.toString()]?.map(serie => (
@@ -306,7 +311,8 @@ const EntrenamientoScreen = ({ route, navigation }: any) => {
                   style={[styles.falloBoton, { flex: 0.5 }, serie.alFallo && styles.falloActivo]}
                   onPress={() => !serie.completada && actualizarSerie(serie.ejercicioId, serie.numSerie, 'alFallo', !serie.alFallo)}
                 >
-                  <Text style={styles.falloTexto}>{serie.alFallo ? '✓' : ''}</Text>
+                  {/* CORRECCIÓN: siempre renderizar Text, cambiar contenido por condición */}
+                  <Text style={styles.falloTexto}>{serie.alFallo ? '✓' : ' '}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.completarBoton, { flex: 0.8 }, serie.completada && styles.completadoBoton]}
@@ -332,237 +338,50 @@ const EntrenamientoScreen = ({ route, navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0F3460'
-  },
-  centrado: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24
-  },
-  cargando: {
-    color: '#fff',
-    fontSize: 16
-  },
-  tituloInicio: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 8
-  },
-  subtituloInicio: {
-    fontSize: 20,
-    color: '#E94560',
-    marginBottom: 8
-  },
-  infoInicio: {
-    fontSize: 16,
-    color: '#888',
-    marginBottom: 40
-  },
-  botonIniciar: {
-    backgroundColor: '#E94560',
-    borderRadius: 14,
-    paddingVertical: 18,
-    paddingHorizontal: 48,
-    marginBottom: 16
-  },
-  botonIniciarTexto: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-  botonVolver: {
-    padding: 12
-  },
-  botonVolverTexto: {
-    color: '#888',
-    fontSize: 16
-  },
-  cabecera: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#1A1A2E'
-  },
-  cabeceraTexto: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  cabeceraDia: {
-    color: '#888',
-    fontSize: 13
-  },
-  tiempoContainer: {
-    backgroundColor: '#16213E',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6
-  },
-  tiempoTexto: {
-    color: '#E94560',
-    fontSize: 20,
-    fontWeight: 'bold',
-    fontVariant: ['tabular-nums']
-  },
-  descansoContainer: {
-    backgroundColor: '#E94560',
-    padding: 20,
-    alignItems: 'center'
-  },
-  descansoTitulo: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  descansoTiempo: {
-    color: '#fff',
-    fontSize: 48,
-    fontWeight: 'bold',
-    fontVariant: ['tabular-nums']
-  },
-  botonSaltar: {
-    marginTop: 8,
-    padding: 8
-  },
-  botonSaltarTexto: {
-    color: '#fff',
-    fontSize: 14,
-    opacity: 0.8
-  },
-  selectorEjercicios: {
-    maxHeight: 50,
-    backgroundColor: '#1A1A2E',
-    paddingHorizontal: 12,
-    paddingVertical: 8
-  },
-  selectorItem: {
-    backgroundColor: '#16213E',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    marginRight: 8
-  },
-  selectorItemActivo: {
-    backgroundColor: '#E94560'
-  },
-  selectorItemCompletado: {
-    backgroundColor: '#10B981'
-  },
-  selectorTexto: {
-    color: '#ccc',
-    fontSize: 13
-  },
-  selectorTextoActivo: {
-    color: '#fff',
-    fontWeight: 'bold'
-  },
-  seriesContainer: {
-    flex: 1,
-    padding: 16
-  },
-  ejercicioNombre: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 4
-  },
-  ejercicioInfo: {
-    fontSize: 14,
-    color: '#888',
-    marginBottom: 16
-  },
-  seriesCabecera: {
-    flexDirection: 'row',
-    marginBottom: 8,
-    paddingHorizontal: 4
-  },
-  seriesCabeceraTexto: {
-    color: '#666',
-    fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center'
-  },
-  serieFila: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1A1A2E',
-    borderRadius: 10,
-    padding: 8,
-    marginBottom: 6,
-    gap: 6
-  },
-  serieCompletada: {
-    backgroundColor: '#1a2e1a',
-    borderColor: '#10B981',
-    borderWidth: 1
-  },
-  serieNumero: {
-    color: '#888',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
-  serieInput: {
-    backgroundColor: '#16213E',
-    borderRadius: 8,
-    padding: 10,
-    color: '#fff',
-    fontSize: 16,
-    textAlign: 'center',
-    borderWidth: 1,
-    borderColor: '#2a2a4a'
-  },
-  falloBoton: {
-    backgroundColor: '#16213E',
-    borderRadius: 8,
-    padding: 10,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#2a2a4a'
-  },
-  falloActivo: {
-    backgroundColor: '#E94560',
-    borderColor: '#E94560'
-  },
-  falloTexto: {
-    color: '#fff',
-    fontSize: 14
-  },
-  completarBoton: {
-    backgroundColor: '#E94560',
-    borderRadius: 8,
-    padding: 10,
-    alignItems: 'center'
-  },
-  completadoBoton: {
-    backgroundColor: '#10B981'
-  },
-  completarTexto: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold'
-  },
-  footer: {
-    padding: 16,
-    backgroundColor: '#1A1A2E'
-  },
-  botonFinalizar: {
-    backgroundColor: '#3a1520',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E94560'
-  },
-  botonFinalizarTexto: {
-    color: '#E94560',
-    fontSize: 16,
-    fontWeight: 'bold'
-  }
+  container: { flex: 1, backgroundColor: '#0F3460' },
+  centrado: { justifyContent: 'center', alignItems: 'center', padding: 24 },
+  cargando: { color: '#fff', fontSize: 16 },
+  tituloInicio: { fontSize: 28, fontWeight: 'bold', color: '#fff', marginBottom: 8 },
+  subtituloInicio: { fontSize: 20, color: '#E94560', marginBottom: 8 },
+  infoInicio: { fontSize: 16, color: '#888', marginBottom: 40 },
+  botonIniciar: { backgroundColor: '#E94560', borderRadius: 14, paddingVertical: 18, paddingHorizontal: 48, marginBottom: 16 },
+  botonIniciarTexto: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  botonVolver: { padding: 12 },
+  botonVolverTexto: { color: '#888', fontSize: 16 },
+  cabecera: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: '#1A1A2E' },
+  cabeceraTexto: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  cabeceraDia: { color: '#888', fontSize: 13 },
+  tiempoContainer: { backgroundColor: '#16213E', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 },
+  tiempoTexto: { color: '#E94560', fontSize: 20, fontWeight: 'bold', fontVariant: ['tabular-nums'] },
+  descansoContainer: { backgroundColor: '#E94560', padding: 20, alignItems: 'center' },
+  descansoTitulo: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  descansoTiempo: { color: '#fff', fontSize: 48, fontWeight: 'bold', fontVariant: ['tabular-nums'] },
+  botonSaltar: { marginTop: 8, padding: 8 },
+  botonSaltarTexto: { color: '#fff', fontSize: 14, opacity: 0.8 },
+  selectorEjercicios: { maxHeight: 50, backgroundColor: '#1A1A2E', paddingHorizontal: 12, paddingVertical: 8 },
+  selectorItem: { backgroundColor: '#16213E', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 },
+  selectorItemActivo: { backgroundColor: '#E94560' },
+  selectorItemCompletado: { backgroundColor: '#10B981' },
+  selectorTexto: { color: '#ccc', fontSize: 13 },
+  selectorTextoActivo: { color: '#fff', fontWeight: 'bold' },
+  seriesContainer: { flex: 1, padding: 16 },
+  ejercicioNombre: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
+  ejercicioInfo: { fontSize: 14, color: '#888', marginBottom: 16 },
+  seriesCabecera: { flexDirection: 'row', marginBottom: 8, paddingHorizontal: 4 },
+  seriesCabeceraTexto: { color: '#666', fontSize: 12, fontWeight: '600', textAlign: 'center' },
+  serieFila: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1A1A2E', borderRadius: 10, padding: 8, marginBottom: 6, gap: 6 },
+  serieCompletada: { backgroundColor: '#1a2e1a', borderColor: '#10B981', borderWidth: 1 },
+  serieNumero: { color: '#888', fontSize: 16, fontWeight: 'bold', textAlign: 'center' },
+  serieInput: { backgroundColor: '#16213E', borderRadius: 8, padding: 10, color: '#fff', fontSize: 16, textAlign: 'center', borderWidth: 1, borderColor: '#2a2a4a' },
+  falloBoton: { backgroundColor: '#16213E', borderRadius: 8, padding: 10, alignItems: 'center', borderWidth: 1, borderColor: '#2a2a4a' },
+  falloActivo: { backgroundColor: '#E94560', borderColor: '#E94560' },
+  falloTexto: { color: '#fff', fontSize: 14 },
+  completarBoton: { backgroundColor: '#E94560', borderRadius: 8, padding: 10, alignItems: 'center' },
+  completadoBoton: { backgroundColor: '#10B981' },
+  completarTexto: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  footer: { padding: 16, backgroundColor: '#1A1A2E' },
+  botonFinalizar: { backgroundColor: '#3a1520', borderRadius: 12, padding: 16, alignItems: 'center', borderWidth: 1, borderColor: '#E94560' },
+  botonFinalizarTexto: { color: '#E94560', fontSize: 16, fontWeight: 'bold' }
 });
 
 export default EntrenamientoScreen;

@@ -86,7 +86,8 @@ const DetalleSesionScreen = ({ route, navigation }: any) => {
           <Text style={styles.resumenValor}>{calcularVolumen().toFixed(0)}</Text>
           <Text style={styles.resumenLabel}>Vol. (kg)</Text>
         </View>
-        {sesion.duracionMin && (
+        {/* CORRECCIÓN: usar != null y > 0 para evitar renderizar 0 como string suelto */}
+        {sesion.duracionMin != null && sesion.duracionMin > 0 && (
           <View style={styles.resumenItem}>
             <Text style={styles.resumenValor}>{sesion.duracionMin}</Text>
             <Text style={styles.resumenLabel}>Minutos</Text>
@@ -94,7 +95,8 @@ const DetalleSesionScreen = ({ route, navigation }: any) => {
         )}
       </View>
 
-      {sesion.notas && (
+      {/* CORRECCIÓN: verificar que notas no sea string vacío */}
+      {sesion.notas != null && sesion.notas.length > 0 && (
         <View style={styles.seccion}>
           <Text style={styles.seccionTitulo}>Notas</Text>
           <View style={styles.tarjeta}>
@@ -105,47 +107,53 @@ const DetalleSesionScreen = ({ route, navigation }: any) => {
 
       <View style={styles.seccion}>
         <Text style={styles.seccionTitulo}>Ejercicios realizados</Text>
-        {ejerciciosAgrupados.map((grupo, index) => (
-          <View key={index} style={styles.tarjeta}>
-            <View style={styles.ejercicioCabecera}>
-              <Text style={styles.ejercicioNombre}>
-                {grupo.ejercicio?.nombre || `Ejercicio ${index + 1}`}
-              </Text>
-              {grupo.ejercicio?.grupoMuscular && (
-                <Text style={styles.ejercicioGrupo}>{grupo.ejercicio.grupoMuscular}</Text>
-              )}
-            </View>
-
-            <View style={styles.seriesCabecera}>
-              <Text style={[styles.seriesHeader, { flex: 0.5 }]}>Serie</Text>
-              <Text style={[styles.seriesHeader, { flex: 1 }]}>Peso</Text>
-              <Text style={[styles.seriesHeader, { flex: 1 }]}>Reps</Text>
-              <Text style={[styles.seriesHeader, { flex: 0.8 }]}>Fallo</Text>
-            </View>
-
-            {grupo.series.sort((a, b) => a.numSerie - b.numSerie).map(serie => (
-              <View key={serie.id} style={styles.serieFila}>
-                <Text style={[styles.serieTexto, { flex: 0.5 }]}>{serie.numSerie}</Text>
-                <Text style={[styles.serieTexto, { flex: 1 }]}>
-                  {Number(serie.pesoKg).toFixed(1)} kg
+        {ejerciciosAgrupados.length === 0 ? (
+          <View style={styles.tarjeta}>
+            <Text style={styles.notasTexto}>No se registraron series en esta sesión.</Text>
+          </View>
+        ) : (
+          ejerciciosAgrupados.map((grupo, index) => (
+            <View key={index} style={styles.tarjeta}>
+              <View style={styles.ejercicioCabecera}>
+                <Text style={styles.ejercicioNombre}>
+                  {grupo.ejercicio?.nombre || `Ejercicio ${index + 1}`}
                 </Text>
-                <Text style={[styles.serieTexto, { flex: 1 }]}>{serie.repeticiones}</Text>
-                <Text style={[styles.serieTexto, { flex: 0.8 }]}>
-                  {serie.alFallo ? '✓' : '-'}
+                {grupo.ejercicio?.grupoMuscular != null && (
+                  <Text style={styles.ejercicioGrupo}>{grupo.ejercicio.grupoMuscular}</Text>
+                )}
+              </View>
+
+              <View style={styles.seriesCabecera}>
+                <Text style={[styles.seriesHeader, { flex: 0.5 }]}>Serie</Text>
+                <Text style={[styles.seriesHeader, { flex: 1 }]}>Peso</Text>
+                <Text style={[styles.seriesHeader, { flex: 1 }]}>Reps</Text>
+                <Text style={[styles.seriesHeader, { flex: 0.8 }]}>Fallo</Text>
+              </View>
+
+              {grupo.series.sort((a, b) => a.numSerie - b.numSerie).map(serie => (
+                <View key={serie.id} style={styles.serieFila}>
+                  <Text style={[styles.serieTexto, { flex: 0.5 }]}>{serie.numSerie}</Text>
+                  <Text style={[styles.serieTexto, { flex: 1 }]}>
+                    {Number(serie.pesoKg).toFixed(1)} kg
+                  </Text>
+                  <Text style={[styles.serieTexto, { flex: 1 }]}>{serie.repeticiones}</Text>
+                  <Text style={[styles.serieTexto, { flex: 0.8 }]}>
+                    {serie.alFallo ? '✓' : '-'}
+                  </Text>
+                </View>
+              ))}
+
+              <View style={styles.estadisticasEjercicio}>
+                <Text style={styles.estadisticaEjercicio}>
+                  Peso máximo: {pesoMaximo(grupo.series).toFixed(1)} kg
+                </Text>
+                <Text style={styles.estadisticaEjercicio}>
+                  Vol.: {grupo.series.reduce((t, s) => t + Number(s.pesoKg) * s.repeticiones, 0).toFixed(0)} kg
                 </Text>
               </View>
-            ))}
-
-            <View style={styles.estadisticasEjercicio}>
-              <Text style={styles.estadisticaEjercicio}>
-                Peso máximo: {pesoMaximo(grupo.series).toFixed(1)} kg
-              </Text>
-              <Text style={styles.estadisticaEjercicio}>
-                Vol.: {grupo.series.reduce((t, s) => t + Number(s.pesoKg) * s.repeticiones, 0).toFixed(0)} kg
-              </Text>
             </View>
-          </View>
-        ))}
+          ))
+        )}
       </View>
 
       <View style={{ height: 40 }} />

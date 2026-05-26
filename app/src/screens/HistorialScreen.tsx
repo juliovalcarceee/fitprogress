@@ -90,7 +90,8 @@ const HistorialScreen = ({ navigation }: any) => {
               {item.rutina?.nombre || 'Sesión libre'} · {diasSemana[item.diaSemana]}
             </Text>
           </View>
-          {item.duracionMin && (
+          {/* CORRECCIÓN: usar != null en vez de && para evitar renderizar 0 como string */}
+          {item.duracionMin != null && item.duracionMin > 0 && (
             <View style={styles.duracionBadge}>
               <Text style={styles.duracionTexto}>{item.duracionMin} min</Text>
             </View>
