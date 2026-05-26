@@ -122,7 +122,7 @@ const AppNavigator = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {token ? (
           <>
-            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="Volver" component={TabNavigator} />
             <Stack.Screen
               name="Entrenamiento"
               component={EntrenamientoScreen}
@@ -130,18 +130,20 @@ const AppNavigator = () => {
                 headerShown: true,
                 headerStyle: { backgroundColor: '#1A1A2E' },
                 headerTintColor: '#fff',
+                headerBackTitle: '',
                 title: 'Entrenamiento'
               }}
             />
             <Stack.Screen
               name="CrearRutina"
               component={CrearRutinaScreen}
-              options={{
+              options={({ route }: any) => ({
                 headerShown: true,
                 headerStyle: { backgroundColor: '#1A1A2E' },
                 headerTintColor: '#fff',
-                title: 'Rutina'
-              }}
+                headerBackTitle: '',
+                title: route.params?.rutinaId ? 'Editar rutina' : 'Nueva rutina'
+              })}
             />
             <Stack.Screen
               name="DetalleSesion"
@@ -150,6 +152,7 @@ const AppNavigator = () => {
                 headerShown: true,
                 headerStyle: { backgroundColor: '#1A1A2E' },
                 headerTintColor: '#fff',
+                headerBackTitle: '',
                 title: 'Detalle de sesión'
               }}
             />
@@ -160,6 +163,7 @@ const AppNavigator = () => {
                 headerShown: true,
                 headerStyle: { backgroundColor: '#1A1A2E' },
                 headerTintColor: '#fff',
+                headerBackTitle: '',
                 title: 'Nuevo ejercicio'
               }}
             />
