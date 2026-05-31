@@ -49,32 +49,7 @@ FitProgress es una aplicación móvil multiplataforma pensada para personas que 
 ### Base de datos
 - PostgreSQL
 
-##  Estructura del proyecto
-fitprogress/
-├── app/                    # Frontend (React Native + Expo)
-│   ├── assets/             # Logo e imágenes
-│   ├── src/
-│   │   ├── components/     # Componentes reutilizables
-│   │   ├── context/        # Contexto de autenticación
-│   │   ├── navigation/     # Navegación de la app
-│   │   ├── screens/        # Pantallas de la app
-│   │   ├── services/       # Conexión con la API
-│   │   └── types/          # Tipos TypeScript
-│   ├── App.tsx             # Punto de entrada
-│   └── package.json
-├── server/                 # Backend (Node.js + Express)
-│   ├── prisma/
-│   │   ├── schema.prisma   # Modelo de datos
-│   │   ├── migrations/     # Migraciones de BD
-│   │   └── seed.ts         # Datos iniciales
-│   ├── src/
-│   │   ├── controllers/    # Lógica de negocio
-│   │   ├── middleware/      # Auth y validaciones
-│   │   ├── routes/         # Rutas de la API
-│   │   └── index.ts        # Punto de entrada del servidor
-│   ├── seed.js             # Script de seed ejecutable
-│   └── package.json
-└── README.md
+
 ##  Modelo de datos
 
 La base de datos cuenta con 8 tablas principales:
